@@ -1,0 +1,9 @@
+/target
+
+# IDE stuff
+.vscore
+.idea
+
+# Training stuff
+checkpoints
+data
