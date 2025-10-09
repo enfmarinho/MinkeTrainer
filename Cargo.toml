@@ -1,0 +1,11 @@
+[package]
+name = "MinkeTrainer"
+description = "The trainer for the Minke chess engine NNUEs, powered by Bullet"
+version = "0.1.0"
+license = "MIT"
+authors = ["Eduardo Marinho <eduardonestormarinho@proton.me>"]
+repository = "https://github.com/enfmarinho/MinkeTrainer.git"
+edition = "2024"
+
+[dependencies]
+bullet_lib = { git = "https://github.com/jw1912/bullet" }
