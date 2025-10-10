@@ -9,3 +9,4 @@ edition = "2024"
 
 [dependencies]
 bullet_lib = { git = "https://github.com/jw1912/bullet" }
+clap = { version = "4.5.48", features = ["derive"] }
