@@ -43,6 +43,15 @@ pub struct Orchestrator {
 
 impl Orchestrator {
     pub fn run(&mut self) {
+        match create_dir_all(&self.checkpoint) {
+            Ok(_) => (),
+            Err(e) => {
+                println!("Could not create directory {} because {}", self.checkpoint, e);
+                return;
+            }
+        }
+
+        self.log_config();
         let mut trainer = ValueTrainerBuilder::default()
             .dual_perspective()
             .optimiser(AdamW)
