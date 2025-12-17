@@ -7,7 +7,7 @@ use bullet_lib::{
 use clap::{Parser, ValueEnum};
 use strum_macros::{Display, EnumIter};
 
-#[derive(Parser)]
+#[derive(Parser, Debug)]
 pub struct Scheduler {
     #[arg(long, default_value_t = config::WDL)]
     wdl: f32,

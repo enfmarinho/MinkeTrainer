@@ -11,7 +11,7 @@ use bullet_lib::{
 };
 use clap::Parser;
 
-#[derive(Parser, Clone)]
+#[derive(Parser, Clone, Debug)]
 pub struct DataFilter {
     #[arg(long, default_value_t = config::MIN_PLY)]
     min_ply: u16,
@@ -46,7 +46,7 @@ impl DataFilter {
     }
 }
 
-#[derive(Parser)]
+#[derive(Parser, Debug)]
 pub struct DataLoader {
     #[arg(long, default_value_t = config::BUFFER_SIZE_MB)]
     buffer_size_mb: usize,

@@ -11,7 +11,7 @@ use dataloader::{DataFilter, DataLoader};
 use scheduler::{Phase, Scheduler};
 use strum::IntoEnumIterator;
 
-#[derive(Parser)]
+#[derive(Parser, Debug)]
 pub struct Orchestrator {
     #[arg(short, long, value_delimiter = ',', required = true)]
     datasets: Vec<String>,
