@@ -9,6 +9,8 @@ use bullet_lib::{
 use clap::Parser;
 use dataloader::{DataFilter, DataLoader};
 use scheduler::{Phase, Scheduler};
+use std::fs::{create_dir_all, OpenOptions};
+use std::io::{self, Write};
 use strum::IntoEnumIterator;
 
 #[derive(Parser, Debug)]
@@ -31,6 +33,9 @@ pub struct Orchestrator {
     #[arg(short, long, default_value_t = 1)]
     threads: usize,
 
+    #[arg(long, default_value_t = true)]
+    log_config: bool,
+
     #[clap(flatten)]
     scheduler: Scheduler,
 
@@ -46,12 +51,21 @@ impl Orchestrator {
         match create_dir_all(&self.checkpoint) {
             Ok(_) => (),
             Err(e) => {
-                println!("Could not create directory {} because {}", self.checkpoint, e);
+                println!(
+                    "Could not create checkpoint directory \"{}\" because {}",
+                    self.checkpoint, e
+                );
                 return;
             }
         }
 
-        self.log_config();
+        if self.log_config {
+            match self.log_config() {
+                Ok(()) => (),
+                Err(e) => println!("Writing config log failed because {}", e),
+            }
+        }
+
         let mut trainer = ValueTrainerBuilder::default()
             .dual_perspective()
             .optimiser(AdamW)
@@ -100,5 +114,17 @@ impl Orchestrator {
                     .load(&self.datasets, &self.filter, self.threads),
             );
         }
+    }
+
+    fn log_config(&self) -> io::Result<()> {
+        let mut file = OpenOptions::new()
+            .write(true)
+            .truncate(true)
+            .create(true)
+            .open(format!("{}/config.log", self.checkpoint.clone()))?;
+
+        writeln!(file, "{:#?}", self)?;
+
+        Ok(())
     }
 }
