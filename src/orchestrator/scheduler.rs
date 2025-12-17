@@ -9,16 +9,16 @@ use strum_macros::{Display, EnumIter};
 
 #[derive(Parser)]
 pub struct Scheduler {
-    #[arg(long, default_value_t = 0.10)]
+    #[arg(long, default_value_t = config::WDL)]
     wdl: f32,
 
-    #[arg(long, default_value_t = 16384)]
+    #[arg(long, default_value_t = config::BATCH_SIZE)]
     batch_size: usize,
 
-    #[arg(long, default_value_t = 6104)]
+    #[arg(long, default_value_t = config::BATCHES_PER_SUPERBATCH)]
     batches_per_superbatch: usize,
 
-    #[arg(long, default_value_t = 10)]
+    #[arg(long, default_value_t = config::SAVE_RATE)]
     save_rate: usize,
 }
 
@@ -54,7 +54,7 @@ impl Scheduler {
         }
         Ok(TrainingSchedule {
             net_id: "minke-pretrain".to_string(),
-            eval_scale: 400.,
+            eval_scale: config::EVAL_SCALE,
             steps: TrainingSteps {
                 batch_size: self.batch_size,
                 batches_per_superbatch: self.batches_per_superbatch,
@@ -65,8 +65,8 @@ impl Scheduler {
             lr_scheduler: Warmup {
                 warmup_batches: self.batches_per_superbatch,
                 inner: LinearDecayLR {
-                    initial_lr: 1e-3,
-                    final_lr: 1e-4,
+                    initial_lr: config::PRETRAIN_INITIAL_LR,
+                    final_lr: config::PRETRAIN_FINAL_LR,
                     final_superbatch: config::PRETRAIN_END_SUPERBATCH,
                 },
             },
@@ -83,7 +83,7 @@ impl Scheduler {
         }
         Ok(TrainingSchedule {
             net_id: "minke-train".to_string(),
-            eval_scale: 400.,
+            eval_scale: config::EVAL_SCALE,
             steps: TrainingSteps {
                 batch_size: self.batch_size,
                 batches_per_superbatch: self.batches_per_superbatch,
@@ -97,8 +97,8 @@ impl Scheduler {
             lr_scheduler: Warmup {
                 warmup_batches: self.batches_per_superbatch,
                 inner: LinearDecayLR {
-                    initial_lr: 5e-4,
-                    final_lr: 1e-5,
+                    initial_lr: config::TRAIN_INITIAL_LR,
+                    final_lr: config::TRAIN_FINAL_LR,
                     final_superbatch: config::TRAIN_END_SUPERBATCH,
                 },
             },
@@ -115,7 +115,7 @@ impl Scheduler {
         }
         Ok(TrainingSchedule {
             net_id: "minke-tune".to_string(),
-            eval_scale: 400.,
+            eval_scale: config::EVAL_SCALE,
             steps: TrainingSteps {
                 batch_size: self.batch_size,
                 batches_per_superbatch: self.batches_per_superbatch,
@@ -129,8 +129,8 @@ impl Scheduler {
             lr_scheduler: Warmup {
                 warmup_batches: self.batches_per_superbatch,
                 inner: LinearDecayLR {
-                    initial_lr: 1e-4,
-                    final_lr: 0.,
+                    initial_lr: config::TUNE_INITIAL_LR,
+                    final_lr: config::TUNE_FINAL_LR,
                     final_superbatch: config::TUNE_END_SUPERBATCH,
                 },
             },

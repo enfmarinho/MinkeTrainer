@@ -1,3 +1,4 @@
+use super::config;
 use bullet_lib::{
     game::formats::{
         bulletformat::ChessBoard,
@@ -12,19 +13,19 @@ use clap::Parser;
 
 #[derive(Parser, Clone)]
 pub struct DataFilter {
-    #[arg(long, default_value_t = 16)]
+    #[arg(long, default_value_t = config::MIN_PLY)]
     min_ply: u16,
 
-    #[arg(long, default_value_t = 5000)]
+    #[arg(long, default_value_t = config::MAX_SCORE)]
     max_score: u16,
 
-    #[arg(long, default_value_t = true)]
+    #[arg(long, default_value_t = config::EXCLUDE_IN_CHECK)]
     exclude_in_check: bool,
 
-    #[arg(long, default_value_t = true)]
+    #[arg(long, default_value_t = config::EXCLUDE_SPECIAL_MOVES)]
     exclude_special_moves: bool,
 
-    #[arg(long, default_value_t = true)]
+    #[arg(long, default_value_t = config::EXCLUDE_CAPTURE)]
     exclude_capture: bool,
 }
 
@@ -47,7 +48,7 @@ impl DataFilter {
 
 #[derive(Parser)]
 pub struct DataLoader {
-    #[arg(long, default_value_t = 2048)]
+    #[arg(long, default_value_t = config::BUFFER_SIZE_MB)]
     buffer_size_mb: usize,
 }
 
