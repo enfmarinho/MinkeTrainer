@@ -1,5 +1,6 @@
 // Default values
 
+/// Network
 pub const HIDDEN_LAYER_SIZE: usize = 1024;
 
 /// DataFilter
