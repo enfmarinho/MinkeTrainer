@@ -12,7 +12,7 @@ use scheduler::{Phase, Scheduler};
 use strum::IntoEnumIterator;
 
 #[derive(Parser)]
-pub struct Trainer {
+pub struct Orchestrator {
     #[arg(short, long, value_delimiter = ',', required = true)]
     datasets: Vec<String>,
 
@@ -41,7 +41,7 @@ pub struct Trainer {
     data_loader: DataLoader,
 }
 
-impl Trainer {
+impl Orchestrator {
     pub fn run(&mut self) {
         let mut trainer = ValueTrainerBuilder::default()
             .dual_perspective()

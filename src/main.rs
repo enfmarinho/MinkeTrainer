@@ -1,8 +1,8 @@
-mod trainer;
+mod orchestrator;
 
 use clap::Parser;
-use trainer::Trainer;
+use orchestrator::Orchestrator;
 
 fn main() {
-    Trainer::parse().run();
+    Orchestrator::parse().run();
 }
