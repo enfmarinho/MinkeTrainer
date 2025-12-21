@@ -53,7 +53,7 @@ impl Scheduler {
             ));
         }
         Ok(TrainingSchedule {
-            net_id: "minke-pretrain".to_string(),
+            net_id: "pretrain".to_string(),
             eval_scale: config::EVAL_SCALE,
             steps: TrainingSteps {
                 batch_size: self.batch_size,
@@ -82,7 +82,7 @@ impl Scheduler {
             ));
         }
         Ok(TrainingSchedule {
-            net_id: "minke-train".to_string(),
+            net_id: "train".to_string(),
             eval_scale: config::EVAL_SCALE,
             steps: TrainingSteps {
                 batch_size: self.batch_size,
@@ -114,7 +114,7 @@ impl Scheduler {
             ));
         }
         Ok(TrainingSchedule {
-            net_id: "minke-tune".to_string(),
+            net_id: "tune".to_string(),
             eval_scale: config::EVAL_SCALE,
             steps: TrainingSteps {
                 batch_size: self.batch_size,
