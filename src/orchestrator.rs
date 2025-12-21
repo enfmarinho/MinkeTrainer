@@ -18,6 +18,9 @@ use strum::IntoEnumIterator;
 
 #[derive(Parser, Debug)]
 pub struct Orchestrator {
+    #[arg(long = "ptd", value_delimiter = ',')]
+    ptdatasets: Vec<String>,
+
     #[arg(short, long, value_delimiter = ',', required = true)]
     datasets: Vec<String>,
 
@@ -100,6 +103,7 @@ impl Orchestrator {
         let start_index = Phase::iter()
             .position(|p| p == self.phase)
             .expect("Invalid phase argument"); // This is not ideal, but it's safe
+
         for phase in Phase::iter().skip(start_index) {
             let start_superbatch = if self.phase == phase {
                 self.start_superbatch
@@ -107,29 +111,30 @@ impl Orchestrator {
                 0
             };
 
+            let datasets = match phase {
+                Phase::Pretrain => {
+                    if self.ptdatasets.is_empty() {
+                        self.datasets.clone()
+                    } else {
+                        self.ptdatasets.clone()
+                    }
+                }
+                _ => self.datasets.clone(),
+            };
             let scheduler = self.scheduler.get(phase, start_superbatch).expect("");
 
-            trainer.run(
-                &scheduler,
-                &settings,
-                &self.load(&self.datasets, &self.filter, self.threads),
-            );
+            trainer.run(&scheduler, &settings, &self.load(&datasets));
         }
     }
 
-    pub fn load(
-        &self,
-        datasets: &[String],
-        filter: &DataFilter,
-        threads: usize,
-    ) -> impl loader::DataLoader<ChessBoard> {
+    pub fn load(&self, datasets: &[String]) -> impl loader::DataLoader<ChessBoard> {
         let datasets = Vec::from_iter(datasets.iter().map(|s| s.as_str()));
-        let filter = filter.clone();
+        let filter = self.filter.clone();
 
         loader::SfBinpackLoader::new_concat_multiple(
             &datasets,
             self.buffer_size_mb,
-            threads,
+            self.threads,
             move |entry| filter.filter(entry),
         )
     }
