@@ -1,13 +1,16 @@
 mod config;
-mod dataloader;
+mod datafilter;
 mod scheduler;
 
 use bullet_lib::{
-    game::inputs::Chess768, nn::optimiser::AdamW, trainer::save::SavedFormat,
-    value::ValueTrainerBuilder, LocalSettings,
+    game::{formats::bulletformat::ChessBoard, inputs::Chess768},
+    nn::optimiser::AdamW,
+    trainer::save::SavedFormat,
+    value::{loader, ValueTrainerBuilder},
+    LocalSettings,
 };
 use clap::Parser;
-use dataloader::{DataFilter, DataLoader};
+use datafilter::DataFilter;
 use scheduler::{Phase, Scheduler};
 use std::fs::{create_dir_all, OpenOptions};
 use std::io::{self, Write};
@@ -42,8 +45,8 @@ pub struct Orchestrator {
     #[clap(flatten)]
     filter: DataFilter,
 
-    #[clap(flatten)]
-    data_loader: DataLoader,
+    #[arg(long, default_value_t = config::BUFFER_SIZE_MB)]
+    buffer_size_mb: usize,
 }
 
 impl Orchestrator {
@@ -109,11 +112,26 @@ impl Orchestrator {
             trainer.run(
                 &scheduler,
                 &settings,
-                &self
-                    .data_loader
-                    .load(&self.datasets, &self.filter, self.threads),
+                &self.load(&self.datasets, &self.filter, self.threads),
             );
         }
+    }
+
+    pub fn load(
+        &self,
+        datasets: &[String],
+        filter: &DataFilter,
+        threads: usize,
+    ) -> impl loader::DataLoader<ChessBoard> {
+        let datasets = Vec::from_iter(datasets.iter().map(|s| s.as_str()));
+        let filter = filter.clone();
+
+        loader::SfBinpackLoader::new_concat_multiple(
+            &datasets,
+            self.buffer_size_mb,
+            threads,
+            move |entry| filter.filter(entry),
+        )
     }
 
     fn log_config(&self) -> io::Result<()> {

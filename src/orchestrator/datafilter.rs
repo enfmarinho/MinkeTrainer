@@ -1,13 +1,7 @@
 use super::config;
-use bullet_lib::{
-    game::formats::{
-        bulletformat::ChessBoard,
-        sfbinpack::{
-            chess::{piecetype::PieceType, r#move::MoveType},
-            TrainingDataEntry,
-        },
-    },
-    value::loader,
+use bullet_lib::game::formats::sfbinpack::{
+    chess::{piecetype::PieceType, r#move::MoveType},
+    TrainingDataEntry,
 };
 use clap::Parser;
 
@@ -43,30 +37,5 @@ impl DataFilter {
         }
 
         valid_entry && entry.ply >= self.min_ply && entry.score.unsigned_abs() <= self.max_score
-    }
-}
-
-#[derive(Parser, Debug)]
-pub struct DataLoader {
-    #[arg(long, default_value_t = config::BUFFER_SIZE_MB)]
-    buffer_size_mb: usize,
-}
-
-impl DataLoader {
-    pub fn load(
-        &self,
-        datasets: &[String],
-        filter: &DataFilter,
-        threads: usize,
-    ) -> impl loader::DataLoader<ChessBoard> {
-        let datasets = Vec::from_iter(datasets.iter().map(|s| s.as_str()));
-        let filter = filter.clone();
-
-        loader::SfBinpackLoader::new_concat_multiple(
-            &datasets,
-            self.buffer_size_mb,
-            threads,
-            move |entry| filter.filter(entry),
-        )
     }
 }
