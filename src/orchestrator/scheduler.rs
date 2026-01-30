@@ -5,10 +5,10 @@ use bullet_lib::{
     wdl::LinearWDL,
 };
 use clap::{Parser, ValueEnum};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use strum_macros::{Display, EnumIter};
 
-#[derive(Parser, Debug, Deserialize)]
+#[derive(Parser, Debug, Deserialize, Serialize)]
 pub struct Scheduler {
     /// The weight assigned to Win/Draw/Loss outcomes versus evaluation scores (0.0 to 1.0)
     #[arg(long, default_value_t = Scheduler::default().wdl)]
@@ -40,7 +40,7 @@ impl Default for Scheduler {
 
 type TrainingSchedulerType = TrainingSchedule<Warmup<LinearDecayLR>, LinearWDL>;
 
-#[derive(Clone, PartialEq, Display, ValueEnum, EnumIter, Debug, Deserialize)]
+#[derive(Clone, PartialEq, Display, ValueEnum, EnumIter, Debug, Deserialize, Serialize)]
 #[strum(serialize_all = "lowercase")]
 #[serde(rename_all = "lowercase")]
 pub enum Phase {

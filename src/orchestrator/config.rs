@@ -1,8 +1,8 @@
 use crate::orchestrator::scheduler::Phase;
 use clap::Args;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Args, Debug, Deserialize)]
+#[derive(Args, Debug, Deserialize, Serialize)]
 pub struct CheckpointConfig {
     /// The current training phase
     #[arg(short, long, default_value_t = CheckpointConfig::default().phase)]
@@ -27,7 +27,7 @@ impl Default for CheckpointConfig {
     }
 }
 
-#[derive(Args, Debug, Deserialize)]
+#[derive(Args, Debug, Deserialize, Serialize)]
 pub struct DatasetConfig {
     /// Paths to pre-train datasets
     #[arg(long, value_delimiter = ',', required = true)]

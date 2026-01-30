@@ -6,10 +6,10 @@ use bullet_lib::game::formats::sfbinpack::{
 };
 use clap::Parser;
 use rand::{Rng, rng};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::sync::atomic::{AtomicU64, Ordering};
 
-#[derive(Parser, Clone, Debug, Deserialize)]
+#[derive(Parser, Clone, Debug, Deserialize, Serialize)]
 pub struct DataFilter {
     /// Minimum number of plies (half-moves) a game must have to be included
     #[arg(long, default_value_t = DataFilter::default().min_ply)]

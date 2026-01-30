@@ -15,7 +15,7 @@ use config::{CheckpointConfig, DatasetConfig};
 use datafilter::DataFilter;
 pub use default::get_material_count_target;
 use scheduler::{Phase, Scheduler};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::io::{self, Write};
 use std::{
     fs::{self, OpenOptions, create_dir_all},
@@ -45,7 +45,7 @@ impl Commands {
     }
 }
 
-#[derive(Args, Debug, Deserialize)]
+#[derive(Args, Debug, Deserialize, Serialize)]
 pub struct Orchestrator {
     /// Directory where checkpoints and logs will be saved
     #[arg(short, long)]
@@ -179,13 +179,24 @@ impl Orchestrator {
     }
 
     fn log_config(&self) -> io::Result<()> {
-        let mut file = OpenOptions::new()
+        let mut log_file = OpenOptions::new()
             .write(true)
             .truncate(true)
             .create(true)
-            .open(format!("{}/config.log", self.output_dir.clone()))?;
+            .open(format!("{}/config.log", self.output_dir))?;
 
-        writeln!(file, "{:#?}", self)?;
+        writeln!(log_file, "{:#?}", self)?;
+
+        let toml_string = toml::to_string_pretty(self);
+        match toml_string {
+            Ok(toml_string) => {
+                let path = format!("{}/config.toml", self.output_dir);
+                if let Err(e) = fs::write(&path, toml_string) {
+                    eprintln!("Failed to write config to {}: {}", path, e);
+                }
+            }
+            Err(e) => eprintln!("Serialization to TOML failed: {}", e),
+        }
 
         Ok(())
     }
