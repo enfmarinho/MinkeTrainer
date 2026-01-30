@@ -1,7 +1,6 @@
+use crate::orchestrator::scheduler::Phase;
 use clap::Args;
 use serde::Deserialize;
-
-use crate::orchestrator::scheduler::Phase;
 
 #[derive(Args, Debug, Deserialize)]
 pub struct CheckpointConfig {

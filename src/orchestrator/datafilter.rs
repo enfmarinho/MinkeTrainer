@@ -1,15 +1,13 @@
-use std::sync::atomic::{AtomicU64, Ordering};
-
-use crate::orchestrator::get_material_count_target;
-
 use super::default;
+use crate::orchestrator::get_material_count_target;
 use bullet_lib::game::formats::sfbinpack::{
-    chess::{piecetype::PieceType, r#move::MoveType},
     TrainingDataEntry,
+    chess::{r#move::MoveType, piecetype::PieceType},
 };
 use clap::Parser;
-use rand::{rng, Rng};
+use rand::{Rng, rng};
 use serde::Deserialize;
+use std::sync::atomic::{AtomicU64, Ordering};
 
 #[derive(Parser, Clone, Debug, Deserialize)]
 pub struct DataFilter {

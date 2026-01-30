@@ -1,8 +1,8 @@
 use super::default;
 use bullet_lib::{
+    TrainingSchedule, TrainingSteps,
     lr::{LinearDecayLR, Warmup},
     wdl::LinearWDL,
-    TrainingSchedule, TrainingSteps,
 };
 use clap::{Parser, ValueEnum};
 use serde::Deserialize;

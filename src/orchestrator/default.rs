@@ -67,7 +67,6 @@ fn material_count_target_distribution() -> [f64; CHESS_PIECE_COUNT] {
     weights
 }
 
-
 pub fn get_material_count_target(index: usize) -> f64 {
     static MATERIAL_COUNT_TARGET_DISTRIBUTION: OnceLock<[f64; 32]> = OnceLock::new();
     MATERIAL_COUNT_TARGET_DISTRIBUTION.get_or_init(material_count_target_distribution)[index]

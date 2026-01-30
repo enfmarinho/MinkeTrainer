@@ -3,23 +3,22 @@ mod datafilter;
 mod default;
 mod scheduler;
 
-pub use default::get_material_count_target;
-
 use bullet_lib::{
+    LocalSettings,
     game::{formats::bulletformat::ChessBoard, inputs::Chess768, outputs::MaterialCount},
     nn::optimiser::AdamW,
     trainer::save::SavedFormat,
-    value::{loader, ValueTrainerBuilder},
-    LocalSettings,
+    value::{ValueTrainerBuilder, loader},
 };
 use clap::{Args, Parser};
 use config::{CheckpointConfig, DatasetConfig};
 use datafilter::DataFilter;
+pub use default::get_material_count_target;
 use scheduler::{Phase, Scheduler};
 use serde::Deserialize;
 use std::io::{self, Write};
 use std::{
-    fs::{self, create_dir_all, OpenOptions},
+    fs::{self, OpenOptions, create_dir_all},
     path::PathBuf,
 };
 use strum::IntoEnumIterator;
