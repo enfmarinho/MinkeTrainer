@@ -5,7 +5,7 @@ mod scheduler;
 
 use bullet_lib::{
     LocalSettings,
-    game::{formats::bulletformat::ChessBoard, inputs::Chess768, outputs::MaterialCount},
+    game::{formats::bulletformat::ChessBoard, inputs::Chess768},
     nn::optimiser::AdamW,
     trainer::save::SavedFormat,
     value::{ValueTrainerBuilder, loader},
@@ -112,7 +112,6 @@ impl Orchestrator {
             .dual_perspective()
             .optimiser(AdamW)
             .inputs(Chess768)
-            .output_buckets(MaterialCount::<{ default::N_OUTPUT_BUCKETS }>)
             .save_format(&[
                 SavedFormat::id("l0w").quantise::<i16>(default::QA),
                 SavedFormat::id("l0b").quantise::<i16>(default::QA),
@@ -122,18 +121,14 @@ impl Orchestrator {
                 SavedFormat::id("l1b").quantise::<i16>(default::QAB),
             ])
             .loss_fn(|output, target| output.sigmoid().squared_error(target))
-            .build(|builder, stm_inputs, ntm_inputs, out_buckets| {
+            .build(|builder, stm_inputs, ntm_inputs| {
                 let l0 = builder.new_affine("l0", 768, default::HIDDEN_LAYER_SIZE);
-                let l1 = builder.new_affine(
-                    "l1",
-                    2 * default::HIDDEN_LAYER_SIZE,
-                    default::N_OUTPUT_BUCKETS,
-                );
+                let l1 = builder.new_affine("l1", 2 * default::HIDDEN_LAYER_SIZE, 1);
 
                 let stm_hidden = l0.forward(stm_inputs).screlu();
                 let ntm_hidden = l0.forward(ntm_inputs).screlu();
                 let hidden_layer = stm_hidden.concat(ntm_hidden);
-                l1.forward(hidden_layer).select(out_buckets)
+                l1.forward(hidden_layer)
             });
 
         let settings = LocalSettings {
