@@ -1,0 +1,28 @@
+threads = 1
+log_config = true
+buffer_size_mb = 2048
+output_dir = "output/path"
+
+[datasets]
+pre_train = ["pretrain_dataset.binpack"]
+train = ["train_dataset.binpack"]
+tune = ["tune_dataset.binpack"]
+
+# [load_checkpoint]
+# phase = "tune"
+# superbatch = 100
+# load = "path/to/checkpoint"
+
+[filter]
+min_ply = 16
+max_score = 5000
+exclude_in_check = true
+exclude_special_moves = true
+exclude_capture = true
+material_count_filter = true
+
+[scheduler]
+wdl = 0.0
+batch_size = 16384
+batches_per_superbatch = 6104
+save_rate = 10
