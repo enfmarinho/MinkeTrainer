@@ -1,5 +1,6 @@
-mod default;
+mod config;
 mod datafilter;
+mod default;
 mod scheduler;
 
 pub use default::get_material_count_target;
@@ -12,6 +13,7 @@ use bullet_lib::{
     LocalSettings,
 };
 use clap::{Args, Parser};
+use config::{CheckpointConfig, DatasetConfig};
 use datafilter::DataFilter;
 use scheduler::{Phase, Scheduler};
 use serde::Deserialize;
@@ -42,40 +44,6 @@ impl Commands {
             }
         }
     }
-}
-
-#[derive(Args, Debug, Deserialize)]
-pub struct CheckpointConfig {
-    #[arg(short, long, default_value_t = CheckpointConfig::default().phase)]
-    pub phase: Phase,
-
-    #[arg(short, long, default_value_t = CheckpointConfig::default().superbatch)]
-    pub superbatch: usize,
-
-    #[arg(short, long, default_value_t = CheckpointConfig::default().load)]
-    pub load: String,
-}
-
-impl Default for CheckpointConfig {
-    fn default() -> Self {
-        CheckpointConfig {
-            phase: Phase::Pretrain,
-            superbatch: 0,
-            load: String::from(""),
-        }
-    }
-}
-
-#[derive(Args, Debug, Deserialize)]
-pub struct DatasetConfig {
-    #[arg(long, value_delimiter = ',', required = true)]
-    pre_train: Vec<String>,
-
-    #[arg(long, value_delimiter = ',', required = true)]
-    train: Vec<String>,
-
-    #[arg(long, value_delimiter = ',', required = true)]
-    tune: Vec<String>,
 }
 
 #[derive(Args, Debug, Deserialize)]
