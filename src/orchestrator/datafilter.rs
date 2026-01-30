@@ -2,7 +2,7 @@ use std::sync::atomic::{AtomicU64, Ordering};
 
 use crate::orchestrator::get_material_count_target;
 
-use super::config;
+use super::default;
 use bullet_lib::game::formats::sfbinpack::{
     chess::{piecetype::PieceType, r#move::MoveType},
     TrainingDataEntry,
@@ -35,12 +35,12 @@ pub struct DataFilter {
 impl Default for DataFilter {
     fn default() -> Self {
         DataFilter {
-            min_ply: config::MIN_PLY,
-            max_score: config::MAX_SCORE,
-            exclude_in_check: config::EXCLUDE_IN_CHECK,
-            exclude_special_moves: config::EXCLUDE_SPECIAL_MOVES,
-            exclude_capture: config::EXCLUDE_CAPTURE,
-            material_count_filter: config::OUT_BUCKET_COUNT_FILTER,
+            min_ply: default::MIN_PLY,
+            max_score: default::MAX_SCORE,
+            exclude_in_check: default::EXCLUDE_IN_CHECK,
+            exclude_special_moves: default::EXCLUDE_SPECIAL_MOVES,
+            exclude_capture: default::EXCLUDE_CAPTURE,
+            material_count_filter: default::OUT_BUCKET_COUNT_FILTER,
         }
     }
 }
@@ -58,8 +58,8 @@ impl DataFilter {
 
     fn material_count_filter(&self, entry: &TrainingDataEntry) -> bool {
         const C: f64 = 0.6;
-        static MATERIAL_COUNT_APPEARENCES: [AtomicU64; config::CHESS_PIECE_COUNT] =
-            [const { AtomicU64::new(0) }; config::CHESS_PIECE_COUNT];
+        static MATERIAL_COUNT_APPEARENCES: [AtomicU64; default::CHESS_PIECE_COUNT] =
+            [const { AtomicU64::new(0) }; default::CHESS_PIECE_COUNT];
         static TOTAL_POSITIONS: AtomicU64 = AtomicU64::new(0);
 
         let mc = entry.pos.occupied().count() as usize - 1; // 0 indexed

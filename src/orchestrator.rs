@@ -1,8 +1,8 @@
-mod config;
+mod default;
 mod datafilter;
 mod scheduler;
 
-pub use config::get_material_count_target;
+pub use default::get_material_count_target;
 
 use bullet_lib::{
     game::{formats::bulletformat::ChessBoard, inputs::Chess768, outputs::MaterialCount},
@@ -106,7 +106,7 @@ pub struct Orchestrator {
     #[serde(default = "DataFilter::default")]
     filter: DataFilter,
 
-    #[arg(long, default_value_t = config::BUFFER_SIZE_MB)]
+    #[arg(long, default_value_t = default::BUFFER_SIZE_MB)]
     buffer_size_mb: usize,
 }
 
@@ -134,22 +134,22 @@ impl Orchestrator {
             .dual_perspective()
             .optimiser(AdamW)
             .inputs(Chess768)
-            .output_buckets(MaterialCount::<{ config::N_OUTPUT_BUCKETS }>)
+            .output_buckets(MaterialCount::<{ default::N_OUTPUT_BUCKETS }>)
             .save_format(&[
-                SavedFormat::id("l0w").quantise::<i16>(config::QA),
-                SavedFormat::id("l0b").quantise::<i16>(config::QA),
+                SavedFormat::id("l0w").quantise::<i16>(default::QA),
+                SavedFormat::id("l0b").quantise::<i16>(default::QA),
                 SavedFormat::id("l1w")
-                    .quantise::<i16>(config::QB)
+                    .quantise::<i16>(default::QB)
                     .transpose(),
-                SavedFormat::id("l1b").quantise::<i16>(config::QAB),
+                SavedFormat::id("l1b").quantise::<i16>(default::QAB),
             ])
             .loss_fn(|output, target| output.sigmoid().squared_error(target))
             .build(|builder, stm_inputs, ntm_inputs, out_buckets| {
-                let l0 = builder.new_affine("l0", 768, config::HIDDEN_LAYER_SIZE);
+                let l0 = builder.new_affine("l0", 768, default::HIDDEN_LAYER_SIZE);
                 let l1 = builder.new_affine(
                     "l1",
-                    2 * config::HIDDEN_LAYER_SIZE,
-                    config::N_OUTPUT_BUCKETS,
+                    2 * default::HIDDEN_LAYER_SIZE,
+                    default::N_OUTPUT_BUCKETS,
                 );
 
                 let stm_hidden = l0.forward(stm_inputs).screlu();
