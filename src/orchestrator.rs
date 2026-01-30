@@ -64,11 +64,6 @@ pub struct Orchestrator {
     #[serde(default)]
     log_config: bool,
 
-    /// Configuration for resuming training from a specific checkpoint
-    #[clap(flatten)]
-    #[serde(default = "CheckpointConfig::default")]
-    load_checkpoint: CheckpointConfig,
-
     /// Paths to datasets
     #[clap(flatten)]
     datasets: DatasetConfig,
@@ -82,6 +77,11 @@ pub struct Orchestrator {
     #[clap(flatten)]
     #[serde(default = "DataFilter::default")]
     filter: DataFilter,
+
+    /// Configuration for resuming training from a specific checkpoint
+    #[clap(flatten)]
+    #[serde(default = "CheckpointConfig::default")]
+    load_checkpoint: CheckpointConfig,
 
     /// Size of the data buffer in Megabytes
     #[arg(long, default_value_t = default::BUFFER_SIZE_MB)]
