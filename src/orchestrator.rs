@@ -30,14 +30,17 @@ pub enum Commands {
     Run(Orchestrator),
 
     /// Load the trainer configuration from a TOML file
-    File { path: PathBuf },
+    Config {
+        /// Path to trainer config file
+        path: PathBuf,
+    },
 }
 
 impl Commands {
     pub fn extract_orchestrator(self) -> Orchestrator {
         match self {
             Commands::Run(orch) => orch,
-            Commands::File { path } => {
+            Commands::Config { path } => {
                 let content = fs::read_to_string(&path).expect("Could not read config file");
                 toml::from_str(&content).expect("Could not parse TOML config")
             }
