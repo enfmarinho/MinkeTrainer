@@ -9,26 +9,40 @@ use bullet_lib::game::formats::sfbinpack::{
 };
 use clap::Parser;
 use rand::{rng, Rng};
+use serde::Deserialize;
 
-#[derive(Parser, Clone, Debug)]
+#[derive(Parser, Clone, Debug, Deserialize)]
 pub struct DataFilter {
-    #[arg(long, default_value_t = config::MIN_PLY)]
+    #[arg(long, default_value_t = DataFilter::default().min_ply)]
     min_ply: u16,
 
-    #[arg(long, default_value_t = config::MAX_SCORE)]
+    #[arg(long, default_value_t = DataFilter::default().max_score)]
     max_score: u16,
 
-    #[arg(long, default_value_t = config::EXCLUDE_IN_CHECK)]
+    #[arg(long, default_value_t = DataFilter::default().exclude_in_check)]
     exclude_in_check: bool,
 
-    #[arg(long, default_value_t = config::EXCLUDE_SPECIAL_MOVES)]
+    #[arg(long, default_value_t = DataFilter::default().exclude_special_moves)]
     exclude_special_moves: bool,
 
-    #[arg(long, default_value_t = config::EXCLUDE_CAPTURE)]
+    #[arg(long, default_value_t = DataFilter::default().exclude_capture)]
     exclude_capture: bool,
 
-    #[arg(long, default_value_t = config::OUT_BUCKET_COUNT_FILTER)]
+    #[arg(long, default_value_t = DataFilter::default().material_count_filter)]
     material_count_filter: bool,
+}
+
+impl Default for DataFilter {
+    fn default() -> Self {
+        DataFilter {
+            min_ply: config::MIN_PLY,
+            max_score: config::MAX_SCORE,
+            exclude_in_check: config::EXCLUDE_IN_CHECK,
+            exclude_special_moves: config::EXCLUDE_SPECIAL_MOVES,
+            exclude_capture: config::EXCLUDE_CAPTURE,
+            material_count_filter: config::OUT_BUCKET_COUNT_FILTER,
+        }
+    }
 }
 
 impl DataFilter {
@@ -49,13 +63,13 @@ impl DataFilter {
         static TOTAL_POSITIONS: AtomicU64 = AtomicU64::new(0);
 
         let mc = entry.pos.occupied().count() as usize - 1; // 0 indexed
-        let mc_appearences =
-            MATERIAL_COUNT_APPEARENCES[mc].fetch_add(1, Ordering::Relaxed) + 1;
+        let mc_appearences = MATERIAL_COUNT_APPEARENCES[mc].fetch_add(1, Ordering::Relaxed) + 1;
         let total_appearences = TOTAL_POSITIONS.fetch_add(1, Ordering::Relaxed) + 1;
         let observed_frequency = mc_appearences as f64 / total_appearences as f64;
         let mc_desired_distribution = get_material_count_target(mc);
 
-        let rejection_probability = 1. - (C * mc_desired_distribution / observed_frequency).clamp(0., 1.);
+        let rejection_probability =
+            1. - (C * mc_desired_distribution / observed_frequency).clamp(0., 1.);
 
         rng().random_bool(rejection_probability)
     }

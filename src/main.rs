@@ -1,8 +1,8 @@
 mod orchestrator;
 
 use clap::Parser;
-use orchestrator::Orchestrator;
+use orchestrator::Commands;
 
 fn main() {
-    Orchestrator::parse().run();
+    Commands::parse().extract_orchestrator().run();
 }

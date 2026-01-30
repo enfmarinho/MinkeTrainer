@@ -5,27 +5,40 @@ use bullet_lib::{
     TrainingSchedule, TrainingSteps,
 };
 use clap::{Parser, ValueEnum};
+use serde::Deserialize;
 use strum_macros::{Display, EnumIter};
 
-#[derive(Parser, Debug)]
+#[derive(Parser, Debug, Deserialize)]
 pub struct Scheduler {
-    #[arg(long, default_value_t = config::WDL)]
+    #[arg(long, default_value_t = Scheduler::default().wdl)]
     wdl: f32,
 
-    #[arg(long, default_value_t = config::BATCH_SIZE)]
+    #[arg(long, default_value_t = Scheduler::default().batch_size)]
     batch_size: usize,
 
-    #[arg(long, default_value_t = config::BATCHES_PER_SUPERBATCH)]
+    #[arg(long, default_value_t = Scheduler::default().batches_per_superbatch)]
     batches_per_superbatch: usize,
 
-    #[arg(long, default_value_t = config::SAVE_RATE)]
+    #[arg(long, default_value_t = Scheduler::default().save_rate)]
     save_rate: usize,
+}
+
+impl Default for Scheduler {
+    fn default() -> Self {
+        Scheduler {
+            wdl: config::WDL,
+            batch_size: config::BATCH_SIZE,
+            batches_per_superbatch: config::BATCHES_PER_SUPERBATCH,
+            save_rate: config::SAVE_RATE,
+        }
+    }
 }
 
 type TrainingSchedulerType = TrainingSchedule<Warmup<LinearDecayLR>, LinearWDL>;
 
-#[derive(Clone, PartialEq, Display, ValueEnum, EnumIter, Debug)]
+#[derive(Clone, PartialEq, Display, ValueEnum, EnumIter, Debug, Deserialize)]
 #[strum(serialize_all = "lowercase")]
+#[serde(rename_all = "lowercase")]
 pub enum Phase {
     Pretrain,
     Train,
