@@ -11,21 +11,27 @@ use std::sync::atomic::{AtomicU64, Ordering};
 
 #[derive(Parser, Clone, Debug, Deserialize)]
 pub struct DataFilter {
+    /// Minimum number of plies (half-moves) a game must have to be included
     #[arg(long, default_value_t = DataFilter::default().min_ply)]
     min_ply: u16,
 
+    /// Maximum absolute eval score allowed
     #[arg(long, default_value_t = DataFilter::default().max_score)]
     max_score: u16,
 
+    /// Whether to filter position where side to move is in check
     #[arg(long, default_value_t = DataFilter::default().exclude_in_check)]
     exclude_in_check: bool,
 
+    /// Whether to filter positions where best move is a special move (castling or en passant)
     #[arg(long, default_value_t = DataFilter::default().exclude_special_moves)]
     exclude_special_moves: bool,
 
+    /// Whether to filter positions where the best move is a capture
     #[arg(long, default_value_t = DataFilter::default().exclude_capture)]
     exclude_capture: bool,
 
+    /// Enable filtering based on the total number of pieces remaining on the board
     #[arg(long, default_value_t = DataFilter::default().material_count_filter)]
     material_count_filter: bool,
 }

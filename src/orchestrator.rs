@@ -47,32 +47,40 @@ impl Commands {
 
 #[derive(Args, Debug, Deserialize)]
 pub struct Orchestrator {
+    /// Directory where checkpoints and logs will be saved
     #[arg(short, long)]
     output_dir: String,
 
+    /// Number of threads to use for data loading and filtering
     #[arg(short, long, default_value_t = Orchestrator::default_threads())]
     #[serde(default = "Orchestrator::default_threads")]
     threads: usize,
 
+    /// Whether to log configuration to "{output_dir}/config.log"
     #[arg(long, default_value_t = false)]
     #[serde(default)]
     log_config: bool,
 
+    /// Configuration for resuming training from a specific checkpoint
     #[clap(flatten)]
     #[serde(default = "CheckpointConfig::default")]
     load_checkpoint: CheckpointConfig,
 
+    /// Paths to datasets
     #[clap(flatten)]
     datasets: DatasetConfig,
 
+    /// Settings for WDL, batch sizes, and save rate
     #[clap(flatten)]
     #[serde(default = "Scheduler::default")]
     scheduler: Scheduler,
 
+    /// Settings for the data filter
     #[clap(flatten)]
     #[serde(default = "DataFilter::default")]
     filter: DataFilter,
 
+    /// Size of the data buffer in Megabytes
     #[arg(long, default_value_t = default::BUFFER_SIZE_MB)]
     buffer_size_mb: usize,
 }

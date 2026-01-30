@@ -10,15 +10,19 @@ use strum_macros::{Display, EnumIter};
 
 #[derive(Parser, Debug, Deserialize)]
 pub struct Scheduler {
+    /// The weight assigned to Win/Draw/Loss outcomes versus evaluation scores (0.0 to 1.0)
     #[arg(long, default_value_t = Scheduler::default().wdl)]
     wdl: f32,
 
+    /// Number of positions processed in a single training step
     #[arg(long, default_value_t = Scheduler::default().batch_size)]
     batch_size: usize,
 
+    /// Number of batches per superbatch
     #[arg(long, default_value_t = Scheduler::default().batches_per_superbatch)]
     batches_per_superbatch: usize,
 
+    /// Frequency to save checkpoints
     #[arg(long, default_value_t = Scheduler::default().save_rate)]
     save_rate: usize,
 }
