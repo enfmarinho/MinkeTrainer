@@ -5,15 +5,15 @@ use serde::{Deserialize, Serialize};
 #[derive(Args, Debug, Deserialize, Serialize)]
 pub struct CheckpointConfig {
     /// The current training phase
-    #[arg(short, long, default_value_t = CheckpointConfig::default().phase)]
+    #[arg(long, default_value_t = CheckpointConfig::default().phase)]
     pub phase: Phase,
 
     /// The superbatch index to resume from
-    #[arg(short, long, default_value_t = CheckpointConfig::default().superbatch)]
+    #[arg(long, default_value_t = CheckpointConfig::default().superbatch)]
     pub superbatch: usize,
 
     /// Path to a checkpoint file to load weights from
-    #[arg(short, long, default_value_t = CheckpointConfig::default().load)]
+    #[arg(long, default_value_t = CheckpointConfig::default().load)]
     pub load: String,
 }
 

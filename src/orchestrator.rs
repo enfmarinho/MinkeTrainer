@@ -60,7 +60,7 @@ pub struct Orchestrator {
     threads: usize,
 
     /// Whether to log configuration to "{output_dir}/config.log"
-    #[arg(long, default_value_t = false)]
+    #[arg(short, long, default_value_t = false)]
     #[serde(default)]
     log_config: bool,
 
